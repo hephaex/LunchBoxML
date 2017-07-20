@@ -1,8 +1,8 @@
 ![LunchBoxML-logo.png](LunchBoxML-logo.png)
 
-# What is LunchBoxML #
+# What is LunchBoxML? #
 
-LunchBoxML is a Grasshopper library extension to [LunchBox](http://provingground.io/tools/lunchbox/) that exposes general purpose machine learning solvers using the Accord.NET framework
+LunchBoxML is a Grasshopper library extension to [LunchBox](http://provingground.io/tools/lunchbox/) that exposes general purpose machine learning solvers using the [Accord.NET](http://accord-framework.net/) framework
 
 ### Who maintains LunchBoxML? ###
 
