@@ -10,7 +10,7 @@ LunchBoxML is a Grasshopper library that exposes general purpose machine learnin
 
 ### How do I get started? ###
 
-* Current "official" Conduit builds can be installed through a [Click Once installer link.](http://provingground-lunchbox.s3-website-us-east-1.amazonaws.com/lunchbox.installer.application)
+* Current LunchBoxML builds as part of the official LunchBox installer [Click Once installer link.](http://provingground-lunchbox.s3-website-us-east-1.amazonaws.com/lunchbox.installer.application)
 * You can also build the Conduit project from the source code (Visual Studio 2015 C# Project)
 
 Requirements:
