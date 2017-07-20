@@ -6,7 +6,7 @@ LunchBoxML is a Grasshopper library extension to [LunchBox](http://provingground
 
 ### Who maintains LunchBoxML? ###
 
-* LunchBoxML was co-authored by [Nazanin Alsadat Tabatabaei Anaraki](https://www.linkedin.com/in/nazanin-alsadat-tabatabaei-anaraki-63989213a/) and [Nathan Miller](https://provingground.io/about/nathan-miller/) as part of Proving Ground's 2017 [Summer Research internship](https://provingground.io/careers/internships/)
+* LunchBoxML was originally co-authored by [Nazanin Alsadat Tabatabaei Anaraki](https://www.linkedin.com/in/nazanin-alsadat-tabatabaei-anaraki-63989213a/) and [Nathan Miller](https://provingground.io/about/nathan-miller/) as part of Proving Ground's 2017 [Summer Research internship](https://provingground.io/careers/internships/)
 * LunchBoxML is maintained by [Proving Ground](http://provingground.io)
 * If you have questions, visit our [LunchBox Website](http://provingground.io/tools/lunchbox/)
 
