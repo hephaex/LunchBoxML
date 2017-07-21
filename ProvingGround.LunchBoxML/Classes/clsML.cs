@@ -316,8 +316,13 @@ namespace ProvingGround.MachineLearning.Classes
             // Create a Bernoulli activation function
             var function = new BernoulliFunction(alpha: 0.5);
 
+
+            int inputsCount = inputs[0].Length;
+            int hiddenNeurons = outputs[0].Length;
+            //int inputsCount = inputs[0].Length;
+            //int hiddenNeurons = outputs[0].Length;
             // Create a Restricted Boltzmann Machine for 6 inputs and with 1 hidden neuron
-            var rbm = new RestrictedBoltzmannMachine(function, inputsCount: 6, hiddenNeurons: 2);
+            var rbm = new RestrictedBoltzmannMachine(function, inputsCount, hiddenNeurons);
 
             // Create the learning algorithm for RBMs
             var teacher = new ContrastiveDivergenceLearning(rbm)
@@ -332,13 +337,7 @@ namespace ProvingGround.MachineLearning.Classes
                 teacher.RunEpoch(inputs);
 
             // Compute the machine answers for the given inputs:
-            double[] a = rbm.Compute(test); // { 0.99, 0.00 }
-
-            double[] b = rbm.Compute(new double[] { 0, 0, 0, 1, 1, 1 }); // { 0.00, 0.99 }
-
-            // We can also generate input vectors given the classes:
-            double[] xa = rbm.GenerateInput(new double[] { 1, 0 }); // { 1, 1, 1, 0, 0, 0 }
-            double[] xb = rbm.GenerateInput(new double[] { 0, 1 }); // { 0, 0, 1, 1, 1, 0 }
+            double[] a = rbm.Compute(test);
             return a;
         }
         #endregion

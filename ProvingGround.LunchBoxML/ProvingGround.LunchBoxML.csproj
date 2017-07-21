@@ -91,7 +91,7 @@
     <Compile Include="Classes\clsML.cs" />
     <Compile Include="Components\nodeGaussianMixture.cs" />
     <Compile Include="Components\nodeHiddenMarkovModel.cs" />
-    <Compile Include="Components\RestrictedBoltzmann.cs" />
+    <Compile Include="Components\nodeRestrictedBoltzmann.cs" />
     <Compile Include="Components\nodeNeuralNetwork.cs" />
     <Compile Include="Components\nodeLogisticRegression.cs" />
     <Compile Include="Components\nodeNonLinearRegression.cs" />
