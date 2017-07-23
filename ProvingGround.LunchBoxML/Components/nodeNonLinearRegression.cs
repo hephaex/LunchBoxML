@@ -14,14 +14,14 @@ namespace ProvingGround.MachineLearning
     /// <summary>
     /// Nonlinear Regression Node
     /// </summary>
-    public class nodeNonLinearRegression : GH_Component
+    public class nodeSeqMinimalRegression : GH_Component
     {
         #region Register Node
         /// <summary>
         /// Load Node Template
         /// </summary>
-        public nodeNonLinearRegression()
-            : base("Nonlinear Regression", "NonlineReg", "Solver for nonlinear regression problems.", "LunchBox", "Machine Learning")
+        public nodeSeqMinimalRegression()
+            : base("Nonlinear Regression", "NonlineReg", "Solver for nonlinear regression problems using Sequential Minimal Optimization.", "LunchBox", "Machine Learning")
         {
 
         }
@@ -58,11 +58,12 @@ namespace ProvingGround.MachineLearning
         /// <param name="pManager"></param>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Test Data", "Test", "Data to test against learning data.", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Inputs", "Inputs", "The list of inputs.", GH_ParamAccess.tree);
+            pManager.AddNumberParameter("Test Data", "Test", "Tree of data to test against learning data.", GH_ParamAccess.tree);
+            pManager.AddNumberParameter("Inputs", "Inputs", "Tree list of inputs.", GH_ParamAccess.tree);
             pManager.AddNumberParameter("Output", "Output", "The list of Outputs.", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("Degree", "Deg", "Degree of prediction curve", GH_ParamAccess.item, 2);
+            pManager.AddIntegerParameter("Sigma", "Sigma", "Sigma of prediction curve", GH_ParamAccess.item, 2);
             pManager.AddNumberParameter("Complexity", "Complex", "Complexity of the prediction", GH_ParamAccess.item, 100);
+            pManager.AddIntegerParameter("Random Seed", "Seed", "Seed for number generator.", GH_ParamAccess.item, 5);
         }
 
         /// <summary>
@@ -85,21 +86,24 @@ namespace ProvingGround.MachineLearning
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Tree Structure Input Variables
-            List<double> test = new List<double>(); ;
+            GH_Structure<GH_Number> test = new GH_Structure<GH_Number>(); ;
             GH_Structure<GH_Number> inputs = new GH_Structure<GH_Number>();
             List<double> outputs = new List<double>();
             int degree = 2;
             double complex = 100;
+            int seed = 5;
 
             //Tree Variables
-            DA.GetDataList(0, test);
+            DA.GetDataTree<GH_Number>(0, out test);
             DA.GetDataTree<GH_Number>(1, out inputs);
             DA.GetDataList(2, outputs);
             DA.GetData(3, ref degree);
             DA.GetData(4, ref complex);
+            DA.GetData(5, ref seed);
 
             // list of lists
-            List<List<double>> m_inputList = new List<List<double>>();
+            List<List<double>> inputList = new List<List<double>>();
+            List<List<double>> testList = new List<List<double>>();
 
             // input list of lists from tree
             for (int i = 0; i < inputs.Branches.Count; i++)
@@ -111,16 +115,29 @@ namespace ProvingGround.MachineLearning
                     list.Add(num.Value);
                 }
 
-                m_inputList.Add(list);
+                inputList.Add(list);
+            }
+
+            // test list of lists from tree
+            for (int i = 0; i < test.Branches.Count; i++)
+            {
+                List<double> list = new List<double>(0);
+                List<GH_Number> branch = test.Branches[i];
+                foreach (GH_Number num in branch)
+                {
+                    list.Add(num.Value);
+                }
+
+                testList.Add(list);
             }
 
             //Result
             clsML learning = new clsML();
-            Tuple<double, double[], double> result = learning.NonLinearRegression(test, m_inputList, outputs, degree, complex);
+            Tuple<double[], double[], double> result = learning.SequentialMinimalOptimizationRegressionModel(testList, inputList, outputs, degree, complex, seed);
 
             //Output
-            DA.SetData(0, result.Item1);
-            DA.SetDataList(1, result.Item2.ToList());
+            DA.SetDataList(0, result.Item2.ToList());
+            DA.SetDataList(1, result.Item1.ToList());
             DA.SetData(2, result.Item3);
         }
         #endregion

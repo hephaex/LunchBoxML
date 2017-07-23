@@ -59,9 +59,14 @@ namespace ProvingGround.MachineLearning
         /// <param name="pManager"></param>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter ("Test Data", "Test", "Data to test against learning data.", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Test Data", "Test", "Data to test against learning data.", GH_ParamAccess.list);
             pManager.AddNumberParameter("Inputs", "Inputs", "The list of inputs.", GH_ParamAccess.tree);
             pManager.AddNumberParameter("Output", "Output", "The list of Outputs.", GH_ParamAccess.tree);
+            pManager.AddNumberParameter("Momentum", "Momentum", "Momentum term of the learning algorithm.", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Learning Rate", "Rate", "Learning rate of the learning algorithm.", GH_ParamAccess.item, 0.1);
+            pManager.AddNumberParameter("Decay", "Decay", "Weight decay constant of the learning algorithm.", GH_ParamAccess.item, 0);
+            pManager.AddNumberParameter("Alpha", "Alpha", "Sigmoid's alpha value.", GH_ParamAccess.item, 0.5);
+            pManager.AddIntegerParameter("Iterations", "Iterations", "Number of iterations to learn", GH_ParamAccess.item, 5000);
         }
 
         /// <summary>
@@ -86,11 +91,21 @@ namespace ProvingGround.MachineLearning
             List<double> test = new List<double>();
             GH_Structure<GH_Number> inputs = new GH_Structure<GH_Number>();
             GH_Structure<GH_Number> outputs = new GH_Structure<GH_Number>();
+            double momentum = 0;
+            double rate = 0.1;
+            double decay = 0;
+            double alpha = 0.5;
+            int iter = 5000;
 
             //Tree Variables
             DA.GetDataList(0, test);
             DA.GetDataTree<GH_Number>(1, out inputs);
             DA.GetDataTree<GH_Number>(2, out outputs);
+            DA.GetData(3, ref momentum);
+            DA.GetData(4, ref rate);
+            DA.GetData(5, ref decay);
+            DA.GetData(6, ref alpha);
+            DA.GetData(7, ref iter);
 
             // list of lists
             List<List<double>> inputList = new List<List<double>>();
@@ -124,14 +139,14 @@ namespace ProvingGround.MachineLearning
 
             //Result
             clsML learning = new clsML();
-            double[] result = learning.RestrictedBoltzmann(test, inputList, outputList);
+            double[] result = learning.RestrictedBoltzmann(test, inputList, outputList, momentum, rate, decay, alpha, iter);
 
             //Output
             DA.SetDataList(0, result.ToList());
 
         }
         #endregion
-    }  
+    }
 }
 
 

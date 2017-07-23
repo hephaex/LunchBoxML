@@ -62,9 +62,9 @@ namespace ProvingGround.MachineLearning
             pManager.AddNumberParameter ("Test Data", "Test", "Data to test against learning data.", GH_ParamAccess.tree);
             pManager.AddNumberParameter("Inputs", "Inputs", "The list of inputs.", GH_ParamAccess.tree);
             pManager.AddIntegerParameter ("Labels", "Labels", "The list of Labels.", GH_ParamAccess.list);
-            pManager.AddIntegerParameter("Hidden Neurons", "Hid Neur", "Number of Hidden Neurons.", GH_ParamAccess.item,5);
-            pManager.AddIntegerParameter("Iterations", "Iter", "Number of iterations to teach the network.", GH_ParamAccess.item,10);
-
+            pManager.AddIntegerParameter("Hidden Neurons", "Neurons", "Number of Hidden Neurons.", GH_ParamAccess.item,5);
+            pManager.AddNumberParameter("Alpha", "Alpha", "Sigmoid's alpha value.", GH_ParamAccess.tree, 2.0);
+            pManager.AddIntegerParameter("Iterations", "Iter", "Number of iterations to teach the network.", GH_ParamAccess.item, 10);
         }
 
         /// <summary>
@@ -86,53 +86,55 @@ namespace ProvingGround.MachineLearning
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Tree Structure Input Variables         
-            GH_Structure<GH_Number> m_tests = new GH_Structure<GH_Number>();
-            GH_Structure<GH_Number> m_inputs = new GH_Structure<GH_Number>();
-            List<int> m_label = new List<int>();
-            int m_numOfNeurons = 5;
-            int m_numOfIterations=10;
+            GH_Structure<GH_Number> tests = new GH_Structure<GH_Number>();
+            GH_Structure<GH_Number> inputs = new GH_Structure<GH_Number>();
+            List<int> labels = new List<int>();
+            int numOfNeurons = 5;
+            int numOfIterations=10;
+            double alpha = 2.0;
 
             //Tree Variables
-            DA.GetDataTree<GH_Number>(0, out m_tests);
-            DA.GetDataTree<GH_Number>(1, out m_inputs);
-            DA.GetDataList(2, m_label);
-            DA.GetData(3, ref m_numOfNeurons);
-            DA.GetData(4, ref m_numOfIterations);
-
+            DA.GetDataTree<GH_Number>(0, out tests);
+            DA.GetDataTree<GH_Number>(1, out inputs);
+            DA.GetDataList(2, labels);
+            DA.GetData(3, ref numOfNeurons);
+            DA.GetData(4, ref alpha);
+            DA.GetData(5, ref numOfIterations);
+            
             // list of lists
-            List<List<double>> m_inputList = new List<List<double>>();
+            List<List<double>> inputList = new List<List<double>>();
 
             // input list of lists from tree
-            for (int i = 0; i < m_inputs.Branches.Count; i++)
+            for (int i = 0; i < inputs.Branches.Count; i++)
             {
                 List<double> list = new List<double>(0);
-                List<GH_Number> branch = m_inputs.Branches[i];
+                List<GH_Number> branch = inputs.Branches[i];
                 foreach (GH_Number num in branch)
                 {
                     list.Add(num.Value);
                 }
 
-                m_inputList.Add(list);
+                inputList.Add(list);
             }
 
-            List<List<double>> m_testList = new List<List<double>>();
+            List<List<double>> testList = new List<List<double>>();
 
             // input list of lists from tree
-            for (int i = 0; i < m_tests.Branches.Count; i++)
+            for (int i = 0; i < tests.Branches.Count; i++)
             {
                 List<double> list = new List<double>(0);
-                List<GH_Number> branch = m_tests.Branches[i];
+                List<GH_Number> branch = tests.Branches[i];
                 foreach (GH_Number num in branch)
                 {
                     list.Add(num.Value);
                 }
 
-                m_testList.Add(list);
+                testList.Add(list);
             }
 
             //Result
             clsML learning = new Classes.clsML();
-            string[] result = learning.NeuralNetwork(m_testList, m_inputList, m_label,m_numOfNeurons,m_numOfIterations);
+            string[] result = learning.NeuralNetwork(testList, inputList, labels, numOfNeurons, alpha, numOfIterations);
  
             //Output
             DA.SetDataList(0, result.ToList());

@@ -36,14 +36,17 @@
     <Reference Include="Accord, Version=3.6.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <HintPath>..\packages\Accord.3.6.0\lib\net45\Accord.dll</HintPath>
     </Reference>
-    <Reference Include="Accord.Controls, Version=3.5.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Accord.Controls.3.5.0\lib\net45\Accord.Controls.dll</HintPath>
+    <Reference Include="Accord.Controls, Version=3.6.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Accord.Controls.3.6.0\lib\net45\Accord.Controls.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Accord.MachineLearning, Version=3.6.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <HintPath>..\packages\Accord.MachineLearning.3.6.0\lib\net45\Accord.MachineLearning.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Accord.MachineLearning.GPL, Version=3.6.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <HintPath>..\packages\Accord.MachineLearning.GPL.3.6.0\lib\net45\Accord.MachineLearning.GPL.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Accord.Math, Version=3.6.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <HintPath>..\packages\Accord.Math.3.6.0\lib\net45\Accord.Math.dll</HintPath>
@@ -51,11 +54,13 @@
     <Reference Include="Accord.Math.Core, Version=3.6.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <HintPath>..\packages\Accord.Math.3.6.0\lib\net45\Accord.Math.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Accord.Neuro, Version=3.5.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Accord.Neuro.3.5.0\lib\net45\Accord.Neuro.dll</HintPath>
+    <Reference Include="Accord.Neuro, Version=3.6.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Accord.Neuro.3.6.0\lib\net45\Accord.Neuro.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Accord.Statistics, Version=3.6.0.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
       <HintPath>..\packages\Accord.Statistics.3.6.0\lib\net45\Accord.Statistics.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="GH_IO">
       <HintPath>..\..\..\..\AppData\Roaming\McNeel\Rhinoceros\5.0\Plug-ins\Grasshopper (b45a29b1-4343-4035-989e-044e8580d9cf)\0.9.76.0\GH_IO.dll</HintPath>
@@ -94,7 +99,7 @@
     <Compile Include="Components\nodeRestrictedBoltzmann.cs" />
     <Compile Include="Components\nodeNeuralNetwork.cs" />
     <Compile Include="Components\nodeLogisticRegression.cs" />
-    <Compile Include="Components\nodeNonLinearRegression.cs" />
+    <Compile Include="Components\nodeNonlinearRegression.cs" />
     <Compile Include="Components\nodeMultivariateLinearRegression.cs" />
     <Compile Include="Components\nodeLinearRegression.cs" />
     <Compile Include="Components\nodeNaiveBayes.cs" />

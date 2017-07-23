@@ -33,9 +33,9 @@ C:\Users\Nathan Miller\Documents\Bitbucket\lunchboxml\ProvingGround.LunchBoxML\b
 C:\Users\Nathan Miller\Documents\Bitbucket\lunchboxml\ProvingGround.LunchBoxML\bin\Debug\tr\ZedGraph.resources.dll
 C:\Users\Nathan Miller\Documents\Bitbucket\lunchboxml\ProvingGround.LunchBoxML\bin\Debug\zh-cn\ZedGraph.resources.dll
 C:\Users\Nathan Miller\Documents\Bitbucket\lunchboxml\ProvingGround.LunchBoxML\bin\Debug\zh-tw\ZedGraph.resources.dll
-C:\Users\Nathan Miller\Documents\Bitbucket\lunchboxml\ProvingGround.LunchBoxML\obj\Debug\ProvingGround.LunchBoxML.csprojResolveAssemblyReference.cache
 C:\Users\Nathan Miller\Documents\Bitbucket\lunchboxml\ProvingGround.LunchBoxML\obj\Debug\LunchBoxML.g.resources
 C:\Users\Nathan Miller\Documents\Bitbucket\lunchboxml\ProvingGround.LunchBoxML\obj\Debug\ProvingGround.MachineLearning.Properties.Resources.resources
 C:\Users\Nathan Miller\Documents\Bitbucket\lunchboxml\ProvingGround.LunchBoxML\obj\Debug\ProvingGround.LunchBoxML.csproj.GenerateResource.Cache
 C:\Users\Nathan Miller\Documents\Bitbucket\lunchboxml\ProvingGround.LunchBoxML\obj\Debug\LunchBoxML.dll
 C:\Users\Nathan Miller\Documents\Bitbucket\lunchboxml\ProvingGround.LunchBoxML\obj\Debug\LunchBoxML.pdb
+C:\Users\Nathan Miller\Documents\Bitbucket\lunchboxml\ProvingGround.LunchBoxML\obj\Debug\ProvingGround.LunchBoxML.csprojResolveAssemblyReference.cache

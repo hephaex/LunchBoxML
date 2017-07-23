@@ -60,7 +60,9 @@ namespace ProvingGround.MachineLearning
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddTextParameter("Inputs", "Inputs", "The list of inputs.", GH_ParamAccess.tree);
-            pManager.AddIntegerParameter("Number", "num", "Number of new samples to generate", GH_ParamAccess.item, 3);
+            pManager.AddIntegerParameter("Generations", "Gen", "Number of new samples to generate", GH_ParamAccess.item, 3);
+            pManager.AddIntegerParameter("Random Seed", "Seed", "Random Seed to start generation.", GH_ParamAccess.item, 5);
+            pManager.AddIntegerParameter("States", "States", "Number of states to be used in the model.", GH_ParamAccess.item, 4);
         }
 
         /// <summary>
@@ -69,7 +71,7 @@ namespace ProvingGround.MachineLearning
         /// <param name="pManager"></param>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.Register_GenericParam("Result", "Result", "Resultant prediction");
+            pManager.Register_GenericParam("Result", "Result", "Predicted generation");
 
         }
         #endregion
@@ -83,11 +85,15 @@ namespace ProvingGround.MachineLearning
         {
             // Tree Structure Input Variables
             int num = 3;
+            int seed = 5;
+            int states = 4;
             GH_Structure<GH_String> inputs = new GH_Structure<GH_String>();
 
             //Tree Variables
             DA.GetDataTree<GH_String>(0, out inputs);
             DA.GetData(1, ref num);
+            DA.GetData(2, ref seed);
+            DA.GetData(3, ref states);
 
             // list of lists
             List<List<string>> inputList = new List<List<string>>();
@@ -107,7 +113,7 @@ namespace ProvingGround.MachineLearning
 
             //Result
             clsML learning = new clsML();
-            string[] result = learning.HiddenMarkovModel(inputList, num);
+            string[] result = learning.HiddenMarkovModel(inputList, num, seed, states);
 
             //Output
             DA.SetDataList(0, result.ToList());

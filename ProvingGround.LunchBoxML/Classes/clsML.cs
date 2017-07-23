@@ -53,6 +53,48 @@ namespace ProvingGround.MachineLearning.Classes
             return result;
         }
 
+        public double[] NonlinearRegressionModel(List<List<double>> testList, List<List<double>> inputList, List<double> outputList)
+        {
+            // tests
+            double[][] tests = testList.Select(a => a.ToArray()).ToArray();
+
+            // sample data
+            double[][] inputs = inputList.Select(a => a.ToArray()).ToArray();
+            double[] outputs = outputList.ToArray();
+
+            // Create a Nonlinear regression using 
+            NonlinearRegression regression = new NonlinearRegression
+            (   3,
+                // Let's assume a quadratic model function: ax² + bx + c
+                function: (w, x) => w[0] * x[0] * x[0] + w[1] * x[0] + w[2],
+                // Derivative in respect to the weights:
+                gradient: (w, x, r) =>
+                {
+                    r[0] = 2 * w[0]; // w.r.t a: 2a  
+                    r[1] = w[1];     // w.r.t b: b
+                    r[2] = w[2];     // w.r.t c: 0
+                }
+            );
+
+            // Create a non-linear least squares teacher
+            NonlinearLeastSquares teacher = new NonlinearLeastSquares(regression);
+
+            // Initialize to some random values
+            regression.Coefficients[0] = 4.2;
+            regression.Coefficients[1] = 0.3;
+            regression.Coefficients[2] = 1;
+
+            // Run the function estimation algorithm
+            double error;
+            for (int i = 0; i < 100; i++)
+                error = teacher.Run(inputs, outputs);
+
+            double[] predict = tests.Apply(regression.Compute);
+
+            return predict;
+
+        }
+
         /// <summary>
         /// Non Linear Regression
         /// </summary>
@@ -62,25 +104,25 @@ namespace ProvingGround.MachineLearning.Classes
         /// <param name="degree">Degree</param>
         /// <param name="complex">Complexity</param>
         /// <returns>Result</returns>
-        public Tuple<double, double[], double> NonLinearRegression(List<double> test, List<List<double>> inputList, List<double> outputList, int degree, double complex)
+        public Tuple<double[], double[], double> SequentialMinimalOptimizationRegressionModel(List<List<double>> test, List<List<double>> inputList, List<double> outputList, double degree, double complex, int seed)
         {
 
             // Training data
             double[][] inputs = inputList.Select(a => a.ToArray()).ToArray();
+            double[][] testdata = test.Select(a => a.ToArray()).ToArray();
             double[] outputs = outputList.ToArray();
-            double[] testdata = test.ToArray();
-
-            Accord.Math.Random.Generator.Seed = 0;
+            
+            Accord.Math.Random.Generator.Seed = seed;
 
             // Create the sequential minimal optimization teacher
-            var learn = new SequentialMinimalOptimizationRegression<Polynomial>()
+            var teacher = new SequentialMinimalOptimizationRegression()
             {
-                Kernel = new Polynomial(degree), // Polynomial Kernel of 2nd degree
+                Kernel = new Gaussian(degree), // Polynomial Kernel of 2nd degree
                 Complexity = complex
             };
 
             // Run the learning algorithm
-            SupportVectorMachine<Polynomial> svm = learn.Learn(inputs, outputs);
+            SupportVectorMachine<IKernel> svm = teacher.Learn(inputs, outputs);
 
             // Compute the predicted scores
             double[] predicted = svm.Score(inputs);
@@ -88,9 +130,15 @@ namespace ProvingGround.MachineLearning.Classes
             // Compute the error between the expected and predicted
             double error = new SquareLoss(outputs).Loss(predicted);
 
-            // Compute the answer for one particular example
-            double fxy = svm.Score(testdata); // 1.0003849827673186
-            return Tuple.Create<double, double[], double>(fxy, predicted, error);
+            List<double> scores = new List<double>();
+            foreach (double[] t in testdata)
+            {
+                double fxy = svm.Score(t);
+                scores.Add(fxy);
+            }
+            double[] scrArr = scores.ToArray();
+
+            return Tuple.Create<double[], double[], double>(predicted, scrArr, error);
         }
 
         /// <summary>
@@ -100,7 +148,7 @@ namespace ProvingGround.MachineLearning.Classes
         /// <param name="inputList">Learning inputs</param>
         /// <param name="outputList">Learnout outputs</param>
         /// <returns>Result</returns>
-        public Tuple<bool, double> LogisticRegression(List<double> test, List<List<double>> inputList, List<bool> outputList)
+        public Tuple<bool, double> LogisticRegression(List<double> test, List<List<double>> inputList, List<bool> outputList, double tolerance, int maxIter, double regular)
         {
             // Training data
             double[][] input = inputList.Select(a => a.ToArray()).ToArray();
@@ -111,8 +159,8 @@ namespace ProvingGround.MachineLearning.Classes
             // Create a new Iterative Reweighted Least Squares algorithm
             var learner = new IterativeReweightedLeastSquares<LogisticRegression>()
             {
-                Tolerance = 1e-4,
-                MaxIterations = 100,
+                Tolerance = tolerance,
+                Iterations = maxIter,
                 Regularization = 0
             };
 
@@ -125,7 +173,6 @@ namespace ProvingGround.MachineLearning.Classes
             bool actual = regression.Decide(testdata);
 
             return Tuple.Create<bool, double>(actual, score);
-
         }
 
         /// <summary>
@@ -164,7 +211,6 @@ namespace ProvingGround.MachineLearning.Classes
         /// <returns>Result</returns>
         public Tuple<string, int, double[]> NaiveBayesClassifier(List<string> test, DataTable data, List<string> inputColumns, string outputColumn)
         {
-
             List<string> colNames = new List<string>();
             foreach (DataColumn dc in data.Columns)
             {
@@ -200,13 +246,9 @@ namespace ProvingGround.MachineLearning.Classes
             int[] instance = codebook.Transform(test.ToArray());
 
             // Let us obtain the numeric output that represents the answer
-            int c = nb.Decide(instance); // answer will be 0
-
-            // Now let us convert the numeric output to an actual "Yes" or "No" answer
-            string result = codebook.Revert(outputColumn, c); // answer will be "No"
-
-            // We can also extract the probabilities for each possible answer
-            double[] probs = nb.Probabilities(instance); // { 0.795, 0.205 }
+            int c = nb.Decide(instance);
+            string result = codebook.Revert(outputColumn, c);
+            double[] probs = nb.Probabilities(instance);
 
             return Tuple.Create<string, int, double[]>(result, c, probs);
         }
@@ -217,9 +259,9 @@ namespace ProvingGround.MachineLearning.Classes
         /// <param name="inputList">Learning samples</param>
         /// <param name="components">Components</param>
         /// <returns>Result</returns>
-        public Tuple<int[], double[], double[][]> GaussianMixture(List<List<double>> inputList, int components)
+        public Tuple<int[], double[], double[][]> GaussianMixture(List<List<double>> inputList, int components, int seed)
         {
-            Accord.Math.Random.Generator.Seed = 0;
+            Accord.Math.Random.Generator.Seed = seed;
 
             // Test Samples
             double[][] samples = inputList.Select(a => a.ToArray()).ToArray();
@@ -232,10 +274,10 @@ namespace ProvingGround.MachineLearning.Classes
 
             // Predict cluster labels for each sample
             int[] predicted = clusters.Decide(samples);
-            double[] logLikelihoods = clusters.LogLikelihood(samples);
-            double[][] probabilities = clusters.Probabilities(samples);
+            double[] proportions = clusters.Proportions;
+            double[][] variance = clusters.Variance;
 
-            return Tuple.Create<int[], double[], double[][]>(predicted, logLikelihoods, probabilities);
+            return Tuple.Create<int[], double[], double[][]>(predicted, proportions, variance);
         }
         #endregion
 
@@ -249,7 +291,7 @@ namespace ProvingGround.MachineLearning.Classes
         /// <param name="hiddenNeurons">Hidden neurons</param>
         /// <param name="teach">teach</param>
         /// <returns>Result</returns>
-        public string[] NeuralNetwork(List<List<double>> test, List<List<double>> inputList, List<int> labelList, int hiddenNeurons, int teach)
+        public string[] NeuralNetwork(List<List<double>> test, List<List<double>> inputList, List<int> labelList, int hiddenNeurons, double alpha, int iterations )
         {
 
             int[] labels = labelList.ToArray();
@@ -263,7 +305,7 @@ namespace ProvingGround.MachineLearning.Classes
             double[][] outputs = Accord.Math.Jagged.OneHot(labels);
 
             // Next we can proceed to create our network
-            var function = new BipolarSigmoidFunction(2);
+            var function = new BipolarSigmoidFunction(alpha);
             var network = new ActivationNetwork(function,
               numberOfInputs, hiddenNeurons, numberOfClasses);
 
@@ -275,7 +317,7 @@ namespace ProvingGround.MachineLearning.Classes
 
             // Teach the network for 10 iterations:
             double error = Double.PositiveInfinity;
-            for (int i = 0; i < teach; i++)
+            for (int i = 0; i < iterations; i++)
                 error = teacher.RunEpoch(input, outputs);
 
             // At this point, the network should be able to 
@@ -305,7 +347,7 @@ namespace ProvingGround.MachineLearning.Classes
         /// <param name="inputList">Learning inputs</param>
         /// <param name="outputList">Learning outputs</param>
         /// <returns>Result</returns>
-        public double[] RestrictedBoltzmann(List<double> testList, List<List<double>> inputList, List<List<double>> outputList)
+        public double[] RestrictedBoltzmann(List<double> testList, List<List<double>> inputList, List<List<double>> outputList, double momentum, double learningrate, double decay, double alpha, int iterations)
         {
 
             // Training data
@@ -314,7 +356,7 @@ namespace ProvingGround.MachineLearning.Classes
             double[] test = testList.ToArray();
 
             // Create a Bernoulli activation function
-            var function = new BernoulliFunction(alpha: 0.5);
+            var function = new BernoulliFunction(alpha: alpha);
 
 
             int inputsCount = inputs[0].Length;
@@ -327,13 +369,13 @@ namespace ProvingGround.MachineLearning.Classes
             // Create the learning algorithm for RBMs
             var teacher = new ContrastiveDivergenceLearning(rbm)
             {
-                Momentum = 0,
-                LearningRate = 0.1,
-                Decay = 0
+                Momentum = momentum,
+                LearningRate = learningrate,
+                Decay = decay
             };
 
             // learn 5000 iterations
-            for (int i = 0; i < 5000; i++)
+            for (int i = 0; i < iterations; i++)
                 teacher.RunEpoch(inputs);
 
             // Compute the machine answers for the given inputs:
@@ -349,17 +391,17 @@ namespace ProvingGround.MachineLearning.Classes
         /// <param name="inputList">Input list</param>
         /// <param name="num">Number</param>
         /// <returns>Result</returns>
-        public string[] HiddenMarkovModel(List<List<string>> inputList, int num)
+        public string[] HiddenMarkovModel(List<List<string>> inputList, int num, int seed, int stateNum)
         {
             string[][] inputs = inputList.Select(a => a.ToArray()).ToArray();
-            Accord.Math.Random.Generator.Seed = 42;
+            Accord.Math.Random.Generator.Seed = seed;
 
-            var codebook = new Codification("Words", inputs);
+            var codebook = new Codification("Data", inputs);
 
-            int[][] sequence = codebook.Transform("Words", inputs);
+            int[][] sequence = codebook.Transform("Data", inputs);
 
-            var topology = new Forward(states: 4);
-            int symbols = codebook["Words"].NumberOfSymbols;
+            var topology = new Forward(states: stateNum);
+            int symbols = codebook["Data"].NumberOfSymbols;
 
             var hmm = new HiddenMarkovModel(topology, symbols);
 
@@ -369,7 +411,7 @@ namespace ProvingGround.MachineLearning.Classes
 
             int[] sample = hmm.Generate(num);
 
-            string[] result = codebook.Revert("Words", sample);
+            string[] result = codebook.Revert("Data", sample);
 
             return result;
         }

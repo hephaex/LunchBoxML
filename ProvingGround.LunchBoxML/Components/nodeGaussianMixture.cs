@@ -60,10 +60,9 @@ namespace ProvingGround.MachineLearning
         /// <param name="pManager"></param>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-
             pManager.AddNumberParameter("Inputs", "Inputs", "The list of inputs.", GH_ParamAccess.tree);
             pManager.AddIntegerParameter("Components", "Components", "number of clusters", GH_ParamAccess.item, 2);
-
+            pManager.AddIntegerParameter("Random Seed", "Seed", "Randomization seed value.", GH_ParamAccess.item, 5);
         }
 
         /// <summary>
@@ -88,31 +87,33 @@ namespace ProvingGround.MachineLearning
             // Solution
 
             //Variables
-            GH_Structure<GH_Number> m_inputs = new GH_Structure<GH_Number>();
-            int m_components = 2;
+            GH_Structure<GH_Number> inputs = new GH_Structure<GH_Number>();
+            int components = 2;
+            int seed = 5;
 
-            DA.GetDataTree<GH_Number>(0, out m_inputs);
-            DA.GetData(1, ref m_components);
+            DA.GetDataTree<GH_Number>(0, out inputs);
+            DA.GetData(1, ref components);
+            DA.GetData(2, ref seed);
 
             // list of lists
-            List<List<double>> m_inputList = new List<List<double>>();
+            List<List<double>> inputList = new List<List<double>>();
 
             // input list of lists from tree
-            for (int i = 0; i < m_inputs.Branches.Count; i++)
+            for (int i = 0; i < inputs.Branches.Count; i++)
             {
                 List<double> list = new List<double>(0);
-                List<GH_Number> branch = m_inputs.Branches[i];
+                List<GH_Number> branch = inputs.Branches[i];
                 foreach (GH_Number num in branch)
                 {
                     list.Add(num.Value);
                 }
 
-                m_inputList.Add(list);
+                inputList.Add(list);
             }
 
             //Result
             clsML learning = new clsML();
-            Tuple<int[], double[],double[][]> result = learning.GaussianMixture(m_inputList,m_components);
+            Tuple<int[], double[],double[][]> result = learning.GaussianMixture(inputList,components, seed);
             List<List<double>> resultList3 = result.Item3
                 .Where(inner => inner != null) // Cope with uninitialised inner arrays.
                 .Select(inner => inner.ToList()) // Project each inner array to a List<string>

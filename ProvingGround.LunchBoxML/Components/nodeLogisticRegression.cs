@@ -61,7 +61,9 @@ namespace ProvingGround.MachineLearning
             pManager.AddNumberParameter ("Test Data", "Test", "Data to test against learning data.", GH_ParamAccess.list);
             pManager.AddNumberParameter("Inputs", "Inputs", "The list of inputs.", GH_ParamAccess.tree);
             pManager.AddBooleanParameter ("Output", "Output", "The list of Outputs.", GH_ParamAccess.list);
-
+            pManager.AddNumberParameter("Tolerance", "Tol", "Tolerance value to use to determine of the algorithm has converged.", GH_ParamAccess.item, 1e-4);
+            pManager.AddIntegerParameter("Maximum Iterations", "MaxIter", "Maximum number of iterations performed by the algorithm", GH_ParamAccess.item, 100);
+            pManager.AddNumberParameter("Regularization Value", "Regular", "Regularization value to be added to the objective function.", GH_ParamAccess.item, 0);
         }
 
         /// <summary>
@@ -87,11 +89,17 @@ namespace ProvingGround.MachineLearning
             List<double> test = new List<double>(); 
             GH_Structure<GH_Number> inputs = new GH_Structure<GH_Number>();
             List<bool> outputs = new List<bool>();
+            double tol = 1e-4;
+            int max = 100;
+            double reg = 0;
 
             //Tree Variables
             DA.GetDataList(0, test);
             DA.GetDataTree<GH_Number>(1, out inputs);
             DA.GetDataList(2, outputs);
+            DA.GetData(3, ref tol);
+            DA.GetData(4, ref max);
+            DA.GetData(5, ref reg);
 
             // list of lists
             List<List<double>> inputList = new List<List<double>>();
@@ -111,7 +119,7 @@ namespace ProvingGround.MachineLearning
 
             //Result
             clsML learning = new clsML();
-            Tuple<bool,double> result = learning.LogisticRegression(test, inputList, outputs);
+            Tuple<bool,double> result = learning.LogisticRegression(test, inputList, outputs, tol, max, reg);
  
             //Output
             DA.SetData(0, result.Item1);
