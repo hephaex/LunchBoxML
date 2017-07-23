@@ -53,48 +53,6 @@ namespace ProvingGround.MachineLearning.Classes
             return result;
         }
 
-        public double[] NonlinearRegressionModel(List<List<double>> testList, List<List<double>> inputList, List<double> outputList)
-        {
-            // tests
-            double[][] tests = testList.Select(a => a.ToArray()).ToArray();
-
-            // sample data
-            double[][] inputs = inputList.Select(a => a.ToArray()).ToArray();
-            double[] outputs = outputList.ToArray();
-
-            // Create a Nonlinear regression using 
-            NonlinearRegression regression = new NonlinearRegression
-            (   3,
-                // Let's assume a quadratic model function: ax² + bx + c
-                function: (w, x) => w[0] * x[0] * x[0] + w[1] * x[0] + w[2],
-                // Derivative in respect to the weights:
-                gradient: (w, x, r) =>
-                {
-                    r[0] = 2 * w[0]; // w.r.t a: 2a  
-                    r[1] = w[1];     // w.r.t b: b
-                    r[2] = w[2];     // w.r.t c: 0
-                }
-            );
-
-            // Create a non-linear least squares teacher
-            NonlinearLeastSquares teacher = new NonlinearLeastSquares(regression);
-
-            // Initialize to some random values
-            regression.Coefficients[0] = 4.2;
-            regression.Coefficients[1] = 0.3;
-            regression.Coefficients[2] = 1;
-
-            // Run the function estimation algorithm
-            double error;
-            for (int i = 0; i < 100; i++)
-                error = teacher.Run(inputs, outputs);
-
-            double[] predict = tests.Apply(regression.Compute);
-
-            return predict;
-
-        }
-
         /// <summary>
         /// Non Linear Regression
         /// </summary>
@@ -148,14 +106,14 @@ namespace ProvingGround.MachineLearning.Classes
         /// <param name="inputList">Learning inputs</param>
         /// <param name="outputList">Learnout outputs</param>
         /// <returns>Result</returns>
-        public Tuple<bool, double> LogisticRegression(List<double> test, List<List<double>> inputList, List<bool> outputList, double tolerance, int maxIter, double regular)
+        public Tuple<bool[], double[]> LogisticRegression(List<List<double>> test, List<List<double>> inputList, List<bool> outputList, double tolerance, int maxIter, double regular)
         {
+            double[][] testdata = test.Select(a => a.ToArray()).ToArray();
+
             // Training data
             double[][] input = inputList.Select(a => a.ToArray()).ToArray();
             bool[] output = outputList.ToArray();
-            double[] testdata = test.ToArray();
-
-
+            
             // Create a new Iterative Reweighted Least Squares algorithm
             var learner = new IterativeReweightedLeastSquares<LogisticRegression>()
             {
@@ -167,12 +125,10 @@ namespace ProvingGround.MachineLearning.Classes
             // Now, we can use the learner to finally estimate our model:
             LogisticRegression regression = learner.Learn(input, output);
 
-            double ageOdds = regression.GetOddsRatio(1);
-            double smokeOdds = regression.GetOddsRatio(2);
-            double score = regression.Probability(testdata);
-            bool actual = regression.Decide(testdata);
+            double[] score = regression.Probability(testdata);
+            bool[] actual = regression.Decide(testdata);
 
-            return Tuple.Create<bool, double>(actual, score);
+            return Tuple.Create<bool[], double[]>(actual, score);
         }
 
         /// <summary>

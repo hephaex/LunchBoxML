@@ -58,7 +58,7 @@ namespace ProvingGround.MachineLearning
         /// <param name="pManager"></param>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter ("Test Data", "Test", "Data to test against learning data.", GH_ParamAccess.list);
+            pManager.AddNumberParameter ("Test Data", "Test", "Data to test against learning data.", GH_ParamAccess.tree);
             pManager.AddNumberParameter("Inputs", "Inputs", "The list of inputs.", GH_ParamAccess.tree);
             pManager.AddBooleanParameter ("Output", "Output", "The list of Outputs.", GH_ParamAccess.list);
             pManager.AddNumberParameter("Tolerance", "Tol", "Tolerance value to use to determine of the algorithm has converged.", GH_ParamAccess.item, 1e-4);
@@ -86,7 +86,7 @@ namespace ProvingGround.MachineLearning
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Tree Structure Input Variables
-            List<double> test = new List<double>(); 
+            GH_Structure<GH_Number> test = new GH_Structure<GH_Number>(); 
             GH_Structure<GH_Number> inputs = new GH_Structure<GH_Number>();
             List<bool> outputs = new List<bool>();
             double tol = 1e-4;
@@ -94,7 +94,7 @@ namespace ProvingGround.MachineLearning
             double reg = 0;
 
             //Tree Variables
-            DA.GetDataList(0, test);
+            DA.GetDataTree<GH_Number>(0, out test);
             DA.GetDataTree<GH_Number>(1, out inputs);
             DA.GetDataList(2, outputs);
             DA.GetData(3, ref tol);
@@ -103,6 +103,7 @@ namespace ProvingGround.MachineLearning
 
             // list of lists
             List<List<double>> inputList = new List<List<double>>();
+            List<List<double>> testList = new List<List<double>>();
 
             // input list of lists from tree
             for (int i = 0; i < inputs.Branches.Count; i++)
@@ -117,13 +118,26 @@ namespace ProvingGround.MachineLearning
                 inputList.Add(list);
             }
 
+            // input list of lists from tree
+            for (int i = 0; i < test.Branches.Count; i++)
+            {
+                List<double> list = new List<double>(0);
+                List<GH_Number> branch = test.Branches[i];
+                foreach (GH_Number num in branch)
+                {
+                    list.Add(num.Value);
+                }
+
+                testList.Add(list);
+            }
+
             //Result
             clsML learning = new clsML();
-            Tuple<bool,double> result = learning.LogisticRegression(test, inputList, outputs, tol, max, reg);
+            Tuple<bool[],double[]> result = learning.LogisticRegression(testList, inputList, outputs, tol, max, reg);
  
             //Output
-            DA.SetData(0, result.Item1);
-            DA.SetData(1, result.Item2);
+            DA.SetDataList(0, result.Item1);
+            DA.SetDataList(1, result.Item2);
         }
         #endregion
     } 
