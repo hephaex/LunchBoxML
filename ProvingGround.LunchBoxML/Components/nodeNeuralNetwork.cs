@@ -63,7 +63,7 @@ namespace ProvingGround.MachineLearning
             pManager.AddNumberParameter("Inputs", "Inputs", "The list of inputs.", GH_ParamAccess.tree);
             pManager.AddIntegerParameter ("Labels", "Labels", "The list of Labels.", GH_ParamAccess.list);
             pManager.AddIntegerParameter("Hidden Neurons", "Neurons", "Number of Hidden Neurons.", GH_ParamAccess.item,5);
-            pManager.AddNumberParameter("Alpha", "Alpha", "Sigmoid's alpha value.", GH_ParamAccess.tree, 2.0);
+            pManager.AddNumberParameter("Alpha", "Alpha", "Sigmoid's alpha value.", GH_ParamAccess.item, 2.0);
             pManager.AddIntegerParameter("Iterations", "Iter", "Number of iterations to teach the network.", GH_ParamAccess.item, 10);
         }
 

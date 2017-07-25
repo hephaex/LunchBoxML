@@ -19,8 +19,10 @@ using Accord.MachineLearning;
 using Accord.Statistics.Models.Markov;
 using Accord.Statistics.Models.Markov.Learning;
 using Accord.Statistics.Models.Markov.Topology;
+using Accord.Statistics.Distributions.Multivariate;
 using Accord.Neuro.ActivationFunctions;
 using Accord.Neuro.Networks;
+using Accord.Statistics.Distributions.Fitting;
 
 namespace ProvingGround.MachineLearning.Classes
 {
@@ -215,21 +217,38 @@ namespace ProvingGround.MachineLearning.Classes
         /// <param name="inputList">Learning samples</param>
         /// <param name="components">Components</param>
         /// <returns>Result</returns>
-        public Tuple<int[], double[], double[][]> GaussianMixture(List<List<double>> inputList, int components, int seed)
+        public Tuple<int[], double[], double[][]> GaussianMixture(List<List<double>> inputList, int coms)
         {
-            Accord.Math.Random.Generator.Seed = seed;
 
             // Test Samples
-            double[][] samples = inputList.Select(a => a.ToArray()).ToArray();
+            double[][] inputData = inputList.Select(a => a.ToArray()).ToArray();
 
-            // Create a new Gaussian Mixture Model with 2 components
-            GaussianMixtureModel gmm = new GaussianMixtureModel(components);
+            //MultivariateNormalDistribution[] components = new MultivariateNormalDistribution[coms];
+            //for (int i = 0; i < coms; i++)
+            //{
+            //    MultivariateNormalDistribution mnd = new MultivariateNormalDistribution(inputData[i].Count());
+            //    components[i] = mnd;
+            //}
 
+            //MixtureOptions fittingOptions = new MixtureOptions()
+            //{
+            //    InnerOptions = new NormalOptions()
+            //    {
+            //        Regularization = 1e-10
+            //    },
+            //};
+
+            //MultivariateMixture<MultivariateNormalDistribution> mixture = new MultivariateMixture<MultivariateNormalDistribution>(components);
+
+            //mixture.Fit(inputData, fittingOptions);
+            //GaussianMixtureModel gmm = new GaussianMixtureModel(mixture);
+
+            GaussianMixtureModel gmm2 = new GaussianMixtureModel(coms);
             // Estimate the Gaussian Mixture
-            var clusters = gmm.Learn(samples);
+            var clusters = gmm2.Learn(inputData);
 
             // Predict cluster labels for each sample
-            int[] predicted = clusters.Decide(samples);
+            int[] predicted = clusters.Decide(inputData);
             double[] proportions = clusters.Proportions;
             double[][] variance = clusters.Variance;
 

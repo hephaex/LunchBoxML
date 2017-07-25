@@ -62,7 +62,6 @@ namespace ProvingGround.MachineLearning
         {
             pManager.AddNumberParameter("Inputs", "Inputs", "The list of inputs.", GH_ParamAccess.tree);
             pManager.AddIntegerParameter("Components", "Components", "number of clusters", GH_ParamAccess.item, 2);
-            pManager.AddIntegerParameter("Random Seed", "Seed", "Randomization seed value.", GH_ParamAccess.item, 5);
         }
 
         /// <summary>
@@ -89,11 +88,9 @@ namespace ProvingGround.MachineLearning
             //Variables
             GH_Structure<GH_Number> inputs = new GH_Structure<GH_Number>();
             int components = 2;
-            int seed = 5;
 
             DA.GetDataTree<GH_Number>(0, out inputs);
             DA.GetData(1, ref components);
-            DA.GetData(2, ref seed);
 
             // list of lists
             List<List<double>> inputList = new List<List<double>>();
@@ -113,7 +110,7 @@ namespace ProvingGround.MachineLearning
 
             //Result
             clsML learning = new clsML();
-            Tuple<int[], double[],double[][]> result = learning.GaussianMixture(inputList,components, seed);
+            Tuple<int[], double[],double[][]> result = learning.GaussianMixture(inputList,components);
             List<List<double>> resultList3 = result.Item3
                 .Where(inner => inner != null) // Cope with uninitialised inner arrays.
                 .Select(inner => inner.ToList()) // Project each inner array to a List<string>
