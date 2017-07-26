@@ -19,7 +19,7 @@ Requirements:
 
 * [Rhinoceros 5.0 (64-Bit)](https://www.rhino3d.com/)
 * [Grasshopper](http://www.grasshopper3d.com/)
-* [Accord.NET](http://accord-framework.net/)
+* [Accord.NET](http://accord-framework.net/) - LunchBox installer will distribute with the latest version. Conflicting versions from other plugins may create problems with LunchBoxML
 
 ### Are you interested in customizing your own machine learning app? ###
 [Check out our software customization service!](https://provingground.io/services/projects/custom-tools-automation/)
