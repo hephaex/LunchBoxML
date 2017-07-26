@@ -36,7 +36,7 @@ If you have built some cool stuff for LunchBoxML and would like to share it back
 
 ### GNU Lesser General Public License ###
 
-LunchBoxML is an open source project under the [GNU Lesser General Public](http://opensource.org/licenses/MIT) license
+LunchBoxML is an open source project under the [GNU Lesser General Public](https://www.gnu.org/licenses/lgpl-3.0.en.html) license
 
 Copyright (c) 2017 [Proving Ground LLC](http://ProvingGround.io)
 
